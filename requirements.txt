@@ -11,7 +11,7 @@ python-multipart==0.0.32
 PyYAML==6.0.3
 pytest==9.1.1
 pytest-cov==7.0.0
-ruff==0.16.2
+ruff==0.16.4
 scikit-learn==1.7.2
 streamlit==1.62.0
 torch==2.13.0
