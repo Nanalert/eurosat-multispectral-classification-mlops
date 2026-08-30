@@ -1,0 +1,112 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  merge_group:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.10"
+  MODEL_RELEASE: production-model-v1
+
+jobs:
+  quality:
+    name: Quality / Ruff
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install Ruff
+        run: python -m pip install ruff==0.16.2
+
+      - name: Lint
+        run: ruff check app python_script tests
+
+      - name: Check formatting
+        run: ruff format --check app python_script tests
+
+  tests:
+    name: Tests / Pytest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements/ci.txt
+
+      - name: Install CPU PyTorch
+        run: >-
+          python -m pip install torch==2.13.0 torchvision==0.28.0
+          --index-url https://download.pytorch.org/whl/cpu
+
+      - name: Install test dependencies
+        run: python -m pip install -r requirements/ci.txt
+
+      - name: Download production artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release download "$MODEL_RELEASE" --dir models/production
+
+      - name: Verify production artifacts
+        run: python python_script/verify_production_artifacts.py
+
+      - name: Run tests with coverage
+        run: >-
+          pytest --cov=python_script.inference --cov=app --cov-branch
+          --cov-report=term-missing --cov-report=xml --cov-report=html:htmlcov
+          --cov-fail-under=90
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-report
+          path: |
+            coverage.xml
+            htmlcov/
+          if-no-files-found: error
+          retention-days: 14
+
+  dvc:
+    name: Data / DVC
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install DVC validation dependencies
+        run: python -m pip install dvc==3.67.1 PyYAML==6.0.3
+
+      - name: Validate pipeline files
+        run: |
+          python -c "import yaml; yaml.safe_load(open('dvc.yaml')); yaml.safe_load(open('dvc.lock'))"
+          dvc dag
+          dvc config --list

@@ -203,6 +203,18 @@ cython_debug/
 # Temporary file for partial code execution
 tempCodeRunnerFile.py
 
+# Temporary resumable training state.
+*_training_checkpoint.pt
+
+# Local experiment tracking state.
+mlartifacts/
+mlruns/
+mlflow.db
+
+# Generated model artifacts are stored by DVC or GitHub Releases.
+models/*
+!models/production/
+
 # Ruff stuff:
 .ruff_cache/
 

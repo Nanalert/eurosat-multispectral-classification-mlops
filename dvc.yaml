@@ -1,0 +1,52 @@
+stages:
+  split:
+    cmd: .venv/bin/python python_script/datasplit.py
+    deps:
+      - data/raw/EuroSAT_RGB/2750
+      - python_script/datasplit.py
+    params:
+      - split.seed
+      - split.train_ratio
+      - split.validation_ratio
+      - split.test_ratio
+    outs:
+      - data/split/train.csv
+      - data/split/validation.csv
+      - data/split/test.csv
+
+  train:
+    cmd: .venv/bin/python python_script/train_production.py
+    deps:
+      - data/split/train.csv
+      - data/split/validation.csv
+      - data/split/test.csv
+      - python_script/evaluation_reports.py
+      - python_script/mlflow_tracking.py
+      - python_script/train_production.py
+      - python_script/train_resnet18.py
+      - python_script/training_metadata.py
+    params:
+      - training
+      - mlflow
+    outs:
+      - models/production/resnet18-production.pt
+      - models/production/resnet18-production_metadata.json
+      - models/production/resnet18-production_confusion_matrix.csv
+      - models/production/resnet18-production_normalized_confusion_matrix.csv
+      - models/production/resnet18-production_test_summary.json
+      - models/production/resnet18-production_training_curves.png
+      - models/production/resnet18-production_class_metrics.png
+      - models/production/resnet18-production_class_support.png
+      - models/production/resnet18-production_confusion_matrix.png
+      - models/production/resnet18-production_normalized_confusion_matrix.png
+    metrics:
+      - models/production/dvc_metrics.json
+    plots:
+      - models/production/resnet18-production_metrics.csv:
+          x: epoch
+      - models/production/resnet18-production_class_metrics.csv:
+          x: class
+      - models/production/resnet18-production_test_predictions.csv:
+          template: confusion
+          x: actual_class
+          y: predicted_class

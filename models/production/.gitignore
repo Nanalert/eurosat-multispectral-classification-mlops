@@ -1,0 +1,14 @@
+/resnet18-production.pt
+/resnet18-production_metadata.json
+/resnet18-production_confusion_matrix.csv
+/resnet18-production_normalized_confusion_matrix.csv
+/resnet18-production_training_curves.png
+/resnet18-production_class_metrics.png
+/resnet18-production_class_support.png
+/resnet18-production_confusion_matrix.png
+/resnet18-production_normalized_confusion_matrix.png
+/dvc_metrics.json
+/resnet18-production_metrics.csv
+/resnet18-production_class_metrics.csv
+/resnet18-production_test_predictions.csv
+/resnet18-production_test_summary.json

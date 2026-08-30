@@ -1,0 +1,145 @@
+schema: '2.0'
+stages:
+  split:
+    cmd: .venv/bin/python python_script/datasplit.py
+    deps:
+    - path: data/raw/EuroSAT_RGB/2750
+      hash: md5
+      md5: bff43f93e1bb7c85d1021434eb407e8a.dir
+      size: 91844360
+      nfiles: 27000
+    - path: python_script/datasplit.py
+      hash: md5
+      md5: 025fae95b33d4dea4f7520bd20da7bda
+      size: 2911
+    params:
+      params.yaml:
+        split.seed: 42
+        split.test_ratio: 0.15
+        split.train_ratio: 0.7
+        split.validation_ratio: 0.15
+    outs:
+    - path: data/split/test.csv
+      hash: md5
+      md5: 8512e3204fc5d8a9dbca9082c3be48b8
+      size: 278917
+    - path: data/split/train.csv
+      hash: md5
+      md5: cf63906e8e4b8bde85669bbd835d3c01
+      size: 1301646
+    - path: data/split/validation.csv
+      hash: md5
+      md5: 2d7367e62438c88db7a7321cb8bab9e3
+      size: 278945
+  train:
+    cmd: .venv/bin/python python_script/train_production.py
+    deps:
+    - path: data/split/test.csv
+      hash: md5
+      md5: 8512e3204fc5d8a9dbca9082c3be48b8
+      size: 278917
+    - path: data/split/train.csv
+      hash: md5
+      md5: cf63906e8e4b8bde85669bbd835d3c01
+      size: 1301646
+    - path: data/split/validation.csv
+      hash: md5
+      md5: 2d7367e62438c88db7a7321cb8bab9e3
+      size: 278945
+    - path: python_script/evaluation_reports.py
+      hash: md5
+      md5: 3f08f15e9e1c5567864c827b62024d47
+      size: 9483
+    - path: python_script/mlflow_tracking.py
+      hash: md5
+      md5: 21e4d1deb072723cfec271056650891b
+      size: 4959
+    - path: python_script/train_production.py
+      hash: md5
+      md5: 3e9c15c6d65ce6ff555a0d6f11ac776c
+      size: 2911
+    - path: python_script/train_resnet18.py
+      hash: md5
+      md5: 67603d7f95069249b497aededa9d71d7
+      size: 14504
+    - path: python_script/training_metadata.py
+      hash: md5
+      md5: f3281d45667be7443bd96f28615a3382
+      size: 3581
+    params:
+      params.yaml:
+        mlflow:
+          enabled: true
+          tracking_uri: http://127.0.0.1:5000
+          experiment_name: eurosat-rgb-classification
+          registered_model_name: EuroSAT_RGB_ResNet18
+        training:
+          architecture: resnet18
+          run_name: resnet18-production
+          seed: 42
+          epochs: 200
+          batch_size: 64
+          number_of_workers: 4
+          learning_rate: 0.0001
+          early_stopping: true
+          patience: 50
+          minimum_improvement: 1e-32
+    outs:
+    - path: models/production/dvc_metrics.json
+      hash: md5
+      md5: a982330ae95458dcc81f9950486fbd93
+      size: 254
+    - path: models/production/resnet18-production.pt
+      hash: md5
+      md5: 09600096108a7bde76e597daf183717b
+      size: 44807307
+    - path: models/production/resnet18-production_class_metrics.csv
+      hash: md5
+      md5: 2d9f14dcf9f5644220938e4f3f5b60b7
+      size: 478
+    - path: models/production/resnet18-production_class_metrics.png
+      hash: md5
+      md5: cf2705c53d7bbd9d51d6d0175b972ca8
+      size: 80037
+    - path: models/production/resnet18-production_class_support.png
+      hash: md5
+      md5: 02f2721d749617b3a92ccff40c4be5a1
+      size: 66733
+    - path: models/production/resnet18-production_confusion_matrix.csv
+      hash: md5
+      md5: d031635d4419e93dd3f75546585c5505
+      size: 445
+    - path: models/production/resnet18-production_confusion_matrix.png
+      hash: md5
+      md5: 93f86b5a0bbd38798b10f5863804e100
+      size: 120987
+    - path: models/production/resnet18-production_metadata.json
+      hash: md5
+      md5: 35885bf498633232253394b9cff69c1a
+      size: 9436
+    - path: models/production/resnet18-production_metrics.csv
+      hash: md5
+      md5: bc624f95df2854a65c67932752a13cc6
+      size: 16853
+    - path:
+        models/production/resnet18-production_normalized_confusion_matrix.csv
+      hash: md5
+      md5: daec213d678ae33254f38512b4406585
+      size: 1178
+    - path:
+        models/production/resnet18-production_normalized_confusion_matrix.png
+      hash: md5
+      md5: 1f2cd6318bd5cffd8f97ae42b817f30d
+      size: 128750
+    - path: models/production/resnet18-production_test_predictions.csv
+      hash: md5
+      md5: f1c6d2ddadc4b956e8f9d8257ac4daaf
+      size: 401772
+    - path: models/production/resnet18-production_test_summary.json
+      hash: md5
+      md5: b5a23614a4cc5f5b91ce1ffc0a50716e
+      size: 251
+    - path: models/production/resnet18-production_training_curves.png
+      hash: md5
+      md5: c234a5b67c171fc9ac3fcc6cd8891b9d
+      size: 145826
