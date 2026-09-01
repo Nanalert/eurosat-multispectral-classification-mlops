@@ -215,6 +215,9 @@ mlflow.db
 models/*
 !models/production/
 
+# Generated evaluation and coverage output; curated figures live in docs/assets.
+reports/
+
 # Ruff stuff:
 .ruff_cache/
 
