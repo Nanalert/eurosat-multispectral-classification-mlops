@@ -1,6 +1,6 @@
 outs:
-- md5: 06c60cc4dd5dd7b1a5eb1d98d9f70796.dir
-  size: 2897937000
-  nfiles: 54000
+- md5: 7f80935e81de18c32412f4776587f1d6.dir
+  size: 2895588000
+  nfiles: 27000
   hash: md5
   path: tif

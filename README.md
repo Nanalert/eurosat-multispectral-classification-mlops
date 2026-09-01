@@ -271,7 +271,7 @@ compose.yaml         Local API and Streamlit deployment
 
 - [Detailed experiment results](docs/results.md)
 - [Docker operations](docker/README.md)
-- [Continuous integration](.github/README.md)
+- [Continuous integration](docs/ci.md)
 - [Production model release](https://github.com/Nanalert/eurosat-multispectral-classification-mlops/releases/tag/production-model-v1)
 
 ## License and Citation
