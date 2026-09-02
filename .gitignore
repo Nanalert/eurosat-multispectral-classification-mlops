@@ -203,6 +203,9 @@ cython_debug/
 # Temporary file for partial code execution
 tempCodeRunnerFile.py
 
+# Windows download metadata is not project data.
+*:Zone.Identifier
+
 # Temporary resumable training state.
 *_training_checkpoint.pt
 
@@ -214,6 +217,9 @@ mlflow.db
 # Generated model artifacts are stored by DVC or GitHub Releases.
 models/*
 !models/production/
+
+# Generated evaluation and coverage output; curated figures live in docs/assets.
+reports/
 
 # Ruff stuff:
 .ruff_cache/

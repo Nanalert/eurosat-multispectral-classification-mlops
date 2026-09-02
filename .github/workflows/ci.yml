@@ -103,7 +103,7 @@ jobs:
           cache: pip
 
       - name: Install DVC validation dependencies
-        run: python -m pip install dvc==3.67.1 PyYAML==6.0.3
+        run: python -m pip install dvc==3.67.1 pygtrie==2.5.0 PyYAML==6.0.3
 
       - name: Validate pipeline files
         run: |
