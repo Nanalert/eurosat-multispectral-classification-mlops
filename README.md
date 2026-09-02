@@ -122,8 +122,8 @@ docker compose up --build -d
 docker compose ps
 ```
 
-Open the Streamlit interface at <http://127.0.0.1:8501> and the FastAPI
-documentation at <http://127.0.0.1:8000/docs>. Stop both services with:
+Open the Streamlit interface at <http://localhost:8501> and the FastAPI
+documentation at <http://localhost:8000/docs>. Stop both services with:
 
 ```bash
 docker compose down
@@ -137,12 +137,12 @@ container commands are available in [docker/README.md](docker/README.md).
 Open two terminals with the virtual environment active:
 
 ```bash
-uvicorn app.api:app --host 127.0.0.1 --port 8000
+uvicorn app.api:app --host localhost --port 8000
 ```
 
 ```bash
 streamlit run app/streamlit_app.py \
-  --server.address 127.0.0.1 --server.port 8501
+  --server.address localhost --server.port 8501
 ```
 
 ## API Usage
@@ -152,14 +152,14 @@ streamlit run app/streamlit_app.py \
 Health and model metadata:
 
 ```bash
-curl http://127.0.0.1:8000/health
-curl http://127.0.0.1:8000/version
+curl http://localhost:8000/health
+curl http://localhost:8000/version
 ```
 
 Classify an image and return the top three classes:
 
 ```bash
-curl -X POST "http://127.0.0.1:8000/predict?top_k=3" \
+curl -X POST "http://localhost:8000/predict?top_k=3" \
   -H "accept: application/json" \
   -F "image=@tests/fixtures/River_100.jpg;type=image/jpeg"
 ```
@@ -194,10 +194,10 @@ Start the local MLflow server in one terminal:
 mlflow server \
   --backend-store-uri sqlite:///mlflow.db \
   --default-artifact-root ./mlartifacts \
-  --host 127.0.0.1 --port 5000
+  --host localhost --port 5000
 ```
 
-Open <http://127.0.0.1:5000>, then reproduce the production training stage:
+Open <http://localhost:5000>, then reproduce the production training stage:
 
 ![MLflow experiment tracking](docs/assets/mlflow-experiments.png)
 
